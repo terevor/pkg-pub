@@ -4,9 +4,14 @@
   "description": "",
   "private": true,
   "dependencies": {
+    "blueimp-md5": "^2.10.0",
     "egg": "^1.9.0",
+    "egg-mongoose": "^2.1.1",
     "egg-scripts": "^2.1.0",
-    "jsonwebtoken": "^8.1.0"
+    "egg-validate": "^1.0.0",
+    "jsonwebtoken": "^8.1.0",
+    "lru-cache": "^4.1.1",
+    "nodemailer": "^4.4.0"
   },
   "devDependencies": {
     "autod": "^2.10.0",
