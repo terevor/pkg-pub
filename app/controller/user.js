@@ -1,6 +1,8 @@
 'use strict'
 
 const md5 = require('blueimp-md5')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 
 module.exports = app => {
     class UserController extends app.Controller {
@@ -120,16 +122,26 @@ module.exports = app => {
         }
 
         async login() {
-            const info = this.ctx.request.body
-            const user = await this.service.user.getByEmail(info.email)
+            let { account, password } = this.ctx.request.body
+            if (!account || !password) {
+                this.error('认证失败，请输入用户名和密码')
+            }
+            account = account.replace(/[^\.\-\_\@0-9a-zA-Z]+/g, '')
+            const user = await this.service.user.getByEmail(account)
             if (!user) {
                 this.error('账号不存在')
             }
-            if (user.password !== md5(info.password, this.config.pwdKey)) {
+            const hmac = crypto.createHmac('sha256', this.config.pwdKey)
+            hmac.update(password)
+            password = hmac.digest('hex')
+            if (user.password !== password) {
                 this.error('密码错误')
             }
             delete user.password
-            this.service.cookie.setUser(user)
+            user.token = jwt.sign(user, this.config.jwtKey, {
+                expiresIn: '24h' // 设置过期时间
+            })
+            // this.service.cookie.setUser(user)
             this.success(user)
         }
 
