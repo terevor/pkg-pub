@@ -8,7 +8,7 @@ module.exports = (options, app) => {
             ctx.request.query.token
         if (token) {
             try {
-                ctx.authUser = jwt.verify(token, ctx.config.jwtKey)
+                ctx.authUser = jwt.verify(token, ctx.app.config.jwtKey)
                 // console.dir(ctx.authUser);
                 await next()
             } catch (err) {
@@ -19,13 +19,12 @@ module.exports = (options, app) => {
                     message = '无效的token.'
                 }
                 ctx.status = 401
-                ctx.body = { success: false, message }
+                ctx.body = { error: message }
             }
         } else {
             ctx.status = 401
             ctx.body = {
-                success: false,
-                message: '非认证用户，禁止访问'
+                error: '非认证用户，禁止访问'
             }
         }
     }

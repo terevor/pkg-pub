@@ -1,14 +1,13 @@
-const md5 = require('blueimp-md5')
+const crypto = require('crypto')
 
 module.exports = app => {
     class UserService extends app.Service {
         async create(user) {
+            const hmac = crypto.createHmac('sha256', this.config.pwdKey)
+            hmac.update(user.password)
+            user.password = hmac.digest('hex')
             return (await app.model
-                .User({
-                    email: user.email,
-                    password: md5(user.password, this.config.pwdKey),
-                    name: user.name
-                })
+                .User(user)
                 .save()).toObject()
         }
 
@@ -43,13 +42,16 @@ module.exports = app => {
         }
 
         updatePassword(email, password) {
+            const hmac = crypto.createHmac('sha256', this.config.pwdKey)
+            hmac.update(password)
+            password = hmac.digest('hex')
             return app.model.User
                 .findOneAndUpdate(
                     {
                         email
                     },
                     {
-                        password: md5(password, this.config.pwdKey),
+                        password,
                         modifiedTime: new Date()
                     },
                     { new: true }
@@ -58,14 +60,20 @@ module.exports = app => {
         }
 
         updatePasswordByOldPassword(oldPassword, newPassword) {
+            const hmac = crypto.createHmac('sha256', this.config.pwdKey)
+            hmac.update(oldPassword)
+            oldPassword = hmac.digest('hex')
+            const hmac2 = crypto.createHmac('sha256', this.config.pwdKey)
+            hmac2.update(newPassword)
+            newPassword = hmac2.digest('hex')
             return app.model.User
                 .findOneAndUpdate(
                     {
                         _id: this.ctx.authUser._id,
-                        password: md5(oldPassword, this.config.pwdKey)
+                        password: oldPassword
                     },
                     {
-                        password: md5(newPassword, this.config.pwdKey),
+                        password: newPassword,
                         modifiedTime: new Date()
                     },
                     { new: true }

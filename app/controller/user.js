@@ -1,6 +1,5 @@
 'use strict'
 
-const md5 = require('blueimp-md5')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 
@@ -117,17 +116,17 @@ module.exports = app => {
             }
             const rs = await this.service.user.create(info)
             delete rs.password
-            this.service.cookie.setUser(rs)
+            // this.service.cookie.setUser(rs)
             this.success(rs)
         }
 
         async login() {
-            let { account, password } = this.ctx.request.body
-            if (!account || !password) {
-                this.error('认证失败，请输入用户名和密码')
+            let { email, password } = this.ctx.request.body
+            if (!email || !password) {
+                this.error('认证失败，请输入账号和密码')
             }
-            account = account.replace(/[^\.\-\_\@0-9a-zA-Z]+/g, '')
-            const user = await this.service.user.getByEmail(account)
+            email = email.replace(/[^\.\-\_\@0-9a-zA-Z]+/g, '')
+            const user = await this.service.user.getByEmail(email)
             if (!user) {
                 this.error('账号不存在')
             }
