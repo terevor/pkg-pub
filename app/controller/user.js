@@ -151,7 +151,7 @@ module.exports = app => {
                 this.error('修改失败', 500)
             }
             delete rs.password
-            this.service.cookie.setUser(rs)
+            // this.service.cookie.setUser(rs)
             this.success(rs)
         }
 
@@ -179,12 +179,12 @@ module.exports = app => {
                 this.error('密码错误')
             }
             delete rs.password
-            this.service.cookie.setUser(rs)
+            // this.service.cookie.setUser(rs)
             this.success(rs)
         }
 
         logout() {
-            this.service.cookie.clearUser()
+            // this.service.cookie.clearUser()
             this.success('注销成功')
         }
     }

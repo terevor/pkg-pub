@@ -10,7 +10,6 @@ module.exports = (options, app) => {
             try {
                 ctx.authUser = jwt.verify(token, ctx.app.config.jwtKey)
                 // console.dir(ctx.authUser);
-                await next()
             } catch (err) {
                 let message
                 if (err.name === 'TokenExpiredError') {
@@ -20,6 +19,9 @@ module.exports = (options, app) => {
                 }
                 ctx.status = 401
                 ctx.body = { error: message }
+            }
+            if (ctx.authUser) {
+                await next()
             }
         } else {
             ctx.status = 401

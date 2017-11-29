@@ -2,8 +2,9 @@
 
 module.exports = app => {
     app.get('/', 'home.index')
-    app.get('/list', 'pkg.list')
-    app.get('/download', 'pkg.download')
+    app.get('/pkg/list', 'pkg.list')
+    app.get('/pkg/list/all', 'pkg.listAll')
+    app.get('/pkg/download', 'pkg.download')
 
     app.get('/auth/user', 'user.get')
     app.post('/auth/register', 'user.create')
@@ -15,4 +16,17 @@ module.exports = app => {
     app.put('/user/password', 'user.updatePassword')
     app.put('/user', 'user.update')
     app.get('/user/search', 'user.search')
+
+    app.get('/project', 'project.findAll')
+    app.post('/project', 'project.create')
+    app.put('/project', 'project.update')
+
+    app.get('/version', 'version.findAll')
+    app.post('/version', 'version.create')
+    app.put('/version', 'version.update')
+
+    app.get('/mod', 'mod.findAll')
+    app.post('/mod', 'mod.create')
+    app.put('/mod', 'mod.update')
+    app.delete('/mod/:id', 'mod.remove')
 }

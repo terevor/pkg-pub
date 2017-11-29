@@ -39,6 +39,40 @@ module.exports = app => {
             }
         }
 
+        async listAll() {
+            const { app, ctx, clearPath, errorMap } = this
+            try {
+                const root = app.config.static.dir
+                let list = fs.readdirSync(root)
+                const files = []
+                list.forEach(file => {
+                    const fpath = path.resolve(root, file)
+                    const stat = fs.statSync(fpath)
+                    if (stat.isDirectory()) {
+                        let sublist = fs.readdirSync(fpath)
+                        const children = []
+                        sublist.forEach(f => {
+                            const fstat = fs.statSync(path.resolve(fpath, f))
+                            if (fstat.isFile()) {
+                                children.push({
+                                    label: f,
+                                    value: f
+                                })
+                            }
+                        })
+                        files.push({
+                            label: file,
+                            value: file,
+                            children
+                        }) 
+                    }
+                })
+                this.success(files)
+            } catch (err) {
+                this.error(errorMap[err.errno] || err.message)
+            }
+        }
+
         async download() {
             const { app, ctx, clearPath, errorMap } = this
             let { dir = '', filename = '' } = ctx.query
