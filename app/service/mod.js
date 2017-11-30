@@ -44,7 +44,7 @@ module.exports = app => {
                     {
                         name: mod.name,
                         desc: mod.desc,
-                        url: mod.tags,
+                        url: mod.url,
                         modifiedTime: new Date()
                     },
                     { new: true }

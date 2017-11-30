@@ -24,7 +24,7 @@ module.exports = app => {
         }
 
         async remove() {
-            await this.service.mod.remove(this.ctx.request.params.id)
+            const rs = await this.service.mod.remove(this.ctx.params.id)
             this.success(rs)
         }
     }
