@@ -6,14 +6,15 @@ const jwt = require('jsonwebtoken')
 module.exports = app => {
     class UserController extends app.Controller {
         async search() {
-            const { query = '' } = this.ctx.query
-            const users = await this.service.user.find(query).lean()
-            this.success(
-                users.map(u => {
-                    delete u.password
-                    return u
-                })
-            )
+            let { name = '', page = 1, limit = 10 } = this.ctx.query
+            page = Number(page)
+            limit = Number(limit)
+            const rs = await this.service.user.find({
+                name,
+                page,
+                limit
+            })
+            this.success(rs)
         }
 
         async sentResetPassCode() {
@@ -97,7 +98,7 @@ module.exports = app => {
         }
 
         async get() {
-            const rs = this.service.cookie.getUser()
+            const rs = this.ctx.authUser
             if (!rs || !rs._id) {
                 this.error('未登录', 401)
             }

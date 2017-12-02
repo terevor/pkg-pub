@@ -23,3 +23,7 @@ pre-program:
 # 开发模式
 server:
 	npm install && npm run dev
+
+# 生产模式
+prod_server:
+	npm install && npm start

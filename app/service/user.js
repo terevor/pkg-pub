@@ -6,17 +6,13 @@ module.exports = app => {
             const hmac = crypto.createHmac('sha256', this.config.pwdKey)
             hmac.update(user.password)
             user.password = hmac.digest('hex')
-            return (await app.model
-                .User(user)
-                .save()).toObject()
+            return (await app.model.User(user).save()).toObject()
         }
 
         getByEmail(email) {
-            return app.model.User
-                .findOne({
-                    email
-                })
-                .lean()
+            return app.model.User.findOne({
+                email
+            }).lean()
         }
 
         getById(id) {
@@ -33,30 +29,41 @@ module.exports = app => {
             })
         }
 
-        find(q) {
-            const reg = new RegExp(`.*${q}.*`, 'i')
-            return app.model.User.find({
+        async find(param) {
+            const reg = new RegExp(`.*${param.name}.*`, 'i')
+            const cond = {
                 invalid: false,
                 $or: [{ name: reg }, { email: reg }]
-            })
+            }
+            const list = await app.model.User.find(cond)
+                .sort({ modifiedTime: -1, createTime: -1 })
+                .skip((param.page - 1) * param.limit)
+                .limit(param.limit)
+                .lean()
+            const total = await app.model.User.find(cond).count()
+            return {
+                list: list.map(u => {
+                    delete u.password
+                    return u
+                }),
+                total
+            }
         }
 
         updatePassword(email, password) {
             const hmac = crypto.createHmac('sha256', this.config.pwdKey)
             hmac.update(password)
             password = hmac.digest('hex')
-            return app.model.User
-                .findOneAndUpdate(
-                    {
-                        email
-                    },
-                    {
-                        password,
-                        modifiedTime: new Date()
-                    },
-                    { new: true }
-                )
-                .lean()
+            return app.model.User.findOneAndUpdate(
+                {
+                    email
+                },
+                {
+                    password,
+                    modifiedTime: new Date()
+                },
+                { new: true }
+            ).lean()
         }
 
         updatePasswordByOldPassword(oldPassword, newPassword) {
@@ -66,36 +73,32 @@ module.exports = app => {
             const hmac2 = crypto.createHmac('sha256', this.config.pwdKey)
             hmac2.update(newPassword)
             newPassword = hmac2.digest('hex')
-            return app.model.User
-                .findOneAndUpdate(
-                    {
-                        _id: this.ctx.authUser._id,
-                        password: oldPassword
-                    },
-                    {
-                        password: newPassword,
-                        modifiedTime: new Date()
-                    },
-                    { new: true }
-                )
-                .lean()
+            return app.model.User.findOneAndUpdate(
+                {
+                    _id: this.ctx.authUser._id,
+                    password: oldPassword
+                },
+                {
+                    password: newPassword,
+                    modifiedTime: new Date()
+                },
+                { new: true }
+            ).lean()
         }
 
         update(user) {
             const authId = this.ctx.authUser._id
-            return app.model.User
-                .findOneAndUpdate(
-                    {
-                        _id: authId
-                    },
-                    {
-                        name: user.name,
-                        email: user.email,
-                        modifiedTime: new Date()
-                    },
-                    { new: true }
-                )
-                .lean()
+            return app.model.User.findOneAndUpdate(
+                {
+                    _id: authId
+                },
+                {
+                    name: user.name,
+                    email: user.email,
+                    modifiedTime: new Date()
+                },
+                { new: true }
+            ).lean()
         }
     }
 
