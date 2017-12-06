@@ -26,9 +26,9 @@ module.exports = app => {
             const key = 'password_' + user._id
             const hasCode = this.service.cache.has(key)
             if (hasCode) {
-                this.error('请勿重复发送')
+                this.error('验证码5分钟内有效，请勿重复发送')
             }
-            const code = this.service.cache.verifyCodeCache(key, 6)
+            const code = this.service.cache.verifyCodeCache(key, 6,  5 * 1000 * 60)
             const rs = await this.service.email.resetPassword(code, user)
             if (rs && rs.messageId) {
                 this.success(true)
@@ -81,6 +81,10 @@ module.exports = app => {
                 this.error('此邮箱未注册')
             }
             const key = 'password_' + user._id
+            const hasCode = this.service.cache.has(key)
+            if (!hasCode) {
+                this.error('验证码已过期，请重新申请')
+            }
             const correctCode = this.service.cache.get(key)
             if (correctCode !== verifyCode) {
                 this.ctx.logger.info(

@@ -41,12 +41,12 @@ module.exports = appInfo => {
     // mail config
     config.transporter = {
         appName: 'VCS',
-        host: 'smtp.qq.com',
+        host: 'smtp.163.com',
         secure: true,
         port: 465,
         auth: {
-            user: '{{email_address}}',
-            pass: '{{email_password}}'
+            user: 'bmnj01439@163.com',
+            pass: 'sigma5t'
         }
     }
 

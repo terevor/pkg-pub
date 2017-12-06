@@ -20,7 +20,7 @@ module.exports = app => {
         resetPassword(verifyCode, user) {
             const html = `
               <strong>重设密码</strong>
-              <p>账户名：${user.name}</p>
+              <p>姓名：${user.name}</p>
               <p>验证码：${verifyCode}</p>
             `
             return this.sent(user.email, '重设密码', html)
@@ -29,8 +29,8 @@ module.exports = app => {
         passwordTicket(ticket, user) {
             const html = `
               <strong>找回密码</strong>
-              <p>账户名：${user.name}</p>
-              <p>链接：${app.config.clientRoot}/#/reset-pass?ticket=${ticket}</p>
+              <p>姓名：${user.name}</p>
+              <p>链接：${app.config.clientRoot}/resetpwd?ticket=${ticket}</p>
             `
             return this.sent(user.email, '找回密码', html)
         }
