@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-module.exports = (options, app) => {
+module.exports = (option, app) => {
     return async function auth(ctx, next) {
         const token =
             ctx.request.headers['x-access-token'] ||

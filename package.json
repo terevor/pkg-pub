@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "blueimp-md5": "^2.10.0",
-    "egg": "^1.9.0",
+    "egg": "^2.0.0",
     "egg-mongoose": "^2.1.1",
     "egg-scripts": "^2.1.0",
     "egg-validate": "^1.0.0",
@@ -24,7 +24,7 @@
     "webstorm-disable-index": "^1.2.0"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "start": "egg-scripts start --daemon --workers=1 --title=pkg-pub",
@@ -39,7 +39,7 @@
     "autod": "autod"
   },
   "ci": {
-    "version": "6, 8"
+    "version": "8, 9"
   },
   "repository": {
     "type": "git",
